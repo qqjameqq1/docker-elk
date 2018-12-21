@@ -1,0 +1,12 @@
+server.name: kibana
+server.host: "0"
+
+#elasticsearch.url: http://54.179.181.52:9200
+elasticsearch.url: http://elasticsearch:9200
+
+xpack.reporting.encryptionKey: "xpack_reporting_encryptionKey"
+xpack.security.encryptionKey: "xpack_security_encryptionKey_xpack_security_encryptionKey"
+# elasticsearch.username: elastic
+# elasticsearch.password: changeme
+
+# xpack.monitoring.ui.container.elasticsearch.enabled: true

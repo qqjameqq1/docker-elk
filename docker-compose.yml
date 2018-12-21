@@ -1,0 +1,79 @@
+version: '2'
+
+services:
+
+    elasticsearch:
+        #mem_limit: 1024m
+        build: ./elasticsearch
+        container_name: elk_c_es
+        image: elk_i_es:1.0.0
+        volumes:
+            - ./datas/elasticsearch:/usr/share/elasticsearch/data
+        ports:
+            - 9200:9200
+        environment:
+            - ES_JAVA_OPTS=-Xms512m -Xms512m
+        networks:
+            #- default
+            - backend
+
+    logstash:
+        #mem_limit: 2048m
+        build: ./logstash
+        container_name: elk_c_logstash
+        image: elk_i_logstash:1.0.0
+        volumes:
+            - ./datas/nginx:/var/log/nginx
+        external_links:
+            - elasticsearch
+        ports:
+            - 5044:5044
+        networks:
+            #- default
+            - backend
+
+    kibana:
+        #mem_limit: 512m
+        build: ./kibana
+        container_name: elk_c_kibana
+        image: elk_i_kibana:1.0.0
+        external_links:
+            - elasticsearch
+        ports:
+            - 5601:5601
+        networks:
+            #- default
+            - backend
+
+    filebeat:
+        #mem_limit: 1024m
+        build: ./filebeat
+        container_name: elk_c_filebeat
+        image: elk_i_filebeat:1.0.0
+        volumes:
+            - ./datas/nginx:/var/log/nginx/
+        external_links:
+            - logstash
+        networks:
+            #- default
+            - backend
+
+    nginx:
+        #mem_limit: 64m
+        build: ./nginx
+        container_name: elk_c_nginx
+        image: elk_i_nginx:1.0.0
+        ports:
+            - "80:80"
+        volumes:
+            - ./datas/nginx:/var/log/nginx
+            - ./html:/var/www/html
+        networks:
+            #- default
+            - backend
+
+networks:
+    #frontend:
+    #    driver: bridge
+    backend:
+        driver: bridge
