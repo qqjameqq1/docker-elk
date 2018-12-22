@@ -16,10 +16,47 @@ services:
             - 9200:9200
             - 9300:9300
         environment:
+            - cluster.name=docker-cluster
+            - bootstrap.memory_lock=true
             - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+            nofile:
+                soft: 65536
+                hard: 65536
         networks:
             #- default
             - backend
+
+    elasticsearch2:
+        #mem_limit: 1024m
+        build:
+            context: ./elasticsearch
+            args:
+                ELK_VERSION: $ELK_VERSION
+        container_name: elk_c_es2
+        image: elk_i_es2:1.0.0
+        volumes:
+            - ./datas/elasticsearch2:/usr/share/elasticsearch/data
+        environment:
+            - cluster.name=docker-cluster
+            - bootstrap.memory_lock=true
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+            - "discovery.zen.ping.unicast.hosts=elasticsearch"
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+            nofile:
+                soft: 65536
+                hard: 65536
+        networks:
+            #- default
+            - backend
+        depends_on:
+            - elasticsearch
 
     logstash:
         #mem_limit: 2048m
