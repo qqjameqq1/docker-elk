@@ -1,4 +1,6 @@
-FROM docker.elastic.co/logstash/logstash:6.4.2
+ARG ELK_VERSION
+
+FROM docker.elastic.co/logstash/logstash:${ELK_VERSION}
 
 #ADD ./config/logstash.conf /usr/share/logstash/pipeline/logstash.conf
 ADD ./config/filebeat.conf /usr/share/logstash/pipeline/filebeat.conf

@@ -1,4 +1,6 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+ARG ELK_VERSION
+
+FROM docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
 
 COPY ./config/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 #COPY ./plugins/ik /usr/share/elasticsearch/plugins/ik

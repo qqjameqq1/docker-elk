@@ -4,22 +4,29 @@ services:
 
     elasticsearch:
         #mem_limit: 1024m
-        build: ./elasticsearch
+        build:
+            context: ./elasticsearch
+            args:
+                ELK_VERSION: $ELK_VERSION
         container_name: elk_c_es
         image: elk_i_es:1.0.0
         volumes:
             - ./datas/elasticsearch:/usr/share/elasticsearch/data
         ports:
             - 9200:9200
+            - 9300:9300
         environment:
-            - ES_JAVA_OPTS=-Xms512m -Xms512m
+            ES_JAVA_OPTS: "-Xmx512m -Xms512m"
         networks:
             #- default
             - backend
 
     logstash:
         #mem_limit: 2048m
-        build: ./logstash
+        build:
+            context: ./logstash
+            args:
+                ELK_VERSION: $ELK_VERSION
         container_name: elk_c_logstash
         image: elk_i_logstash:1.0.0
         volumes:
@@ -28,13 +35,20 @@ services:
             - elasticsearch
         ports:
             - 5044:5044
+        environment:
+            LS_JAVA_OPTS: "-Xmx512m -Xms512m"
         networks:
             #- default
             - backend
+        depends_on:
+            - elasticsearch
 
     kibana:
         #mem_limit: 512m
-        build: ./kibana
+        build:
+            context: ./kibana
+            args:
+                ELK_VERSION: $ELK_VERSION
         container_name: elk_c_kibana
         image: elk_i_kibana:1.0.0
         external_links:
@@ -44,10 +58,15 @@ services:
         networks:
             #- default
             - backend
+        depends_on:
+            - elasticsearch
 
     filebeat:
         #mem_limit: 1024m
-        build: ./filebeat
+        build:
+            context: ./filebeat
+            args:
+                ELK_VERSION: $ELK_VERSION
         container_name: elk_c_filebeat
         image: elk_i_filebeat:1.0.0
         volumes:
